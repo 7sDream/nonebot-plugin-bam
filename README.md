@@ -19,9 +19,15 @@ import nonebot
 from nonebot.adapters.cqhttp import Bot as CQHTTPBot
 
 nonebot.init(_env_file=".env")
+
 driver = nonebot.get_driver()
 driver.register_adapter("cqhttp", CQHTTPBot)
+
 nonebot.load_builtin_plugins()
+
+# load other plugins
+
+# bam need this to manage background tasks
 nonebot.load_plugin("nonebot_plugin_apscheduler")
 nonebot.load_plugin("nonebot_plugin_bam")
 
@@ -40,6 +46,9 @@ BAM_ON_STARTUP_CLEAN_LIVE_STATUS=false
 # 监控任务的间隔，这里设置的是每个用户间的间隔，而不是一轮的间隔。所以如果一共关注了 N 个人，那对于每个人来说，两次检测之间的间隔就是 N * interval
 # 一般来说不要设置在 5 以下，可能会被 B 站 API 反爬而拒绝响应
 BAM_TASK_INTERVAL=5
+
+# 使用那一个直播间状态查询 API，默认为 2，如果发现被封禁了可以临时调到 1 试试
+BAM_LIVE_API=2
 ```
 
 ## 命令列表

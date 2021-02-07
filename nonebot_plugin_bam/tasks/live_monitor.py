@@ -7,7 +7,6 @@ from nonebot.log import logger
 from nonebot.adapters.cqhttp import Bot
 
 from ..database import helper
-from ..bilibili.live1 import room_info, RoomInfo
 from ..common import CONF, get_bot, send_exception_to_su
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
@@ -15,6 +14,14 @@ scheduler = require("nonebot_plugin_apscheduler").scheduler
 JOB_ID = "live_monitor"
 LOGNAME = "BTASK:LIVE"
 INTERVAL = CONF.bam_monitor_task_interval
+
+if CONF.bam_live_api == 1:
+    from ..bilibili.live1 import room_info, RoomInfo
+elif CONF.bam_live_api == 2:
+    from ..bilibili.live2 import room_info, RoomInfo
+else:
+    logger.error("Invalid `BAM_LIVE_API` configure value")
+    exit
 
 
 @scheduler.scheduled_job(
