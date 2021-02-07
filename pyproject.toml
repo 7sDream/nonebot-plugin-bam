@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_bam"
-version = "0.1.0"
+version = "0.1.1"
 description = "Bilibili activity monitor plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
