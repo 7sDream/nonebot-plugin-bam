@@ -12,16 +12,19 @@ from ..bilibili.activity import activity_list, ActivityList
 from ..common import CONF, get_bot, send_exception_to_su
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
+
+JON_ID = "activity_monitor"
 LOGNAME = "TASK:ACTIVITY"
+INTERVAL = CONF.bam_monitor_task_interval
 
 
 @scheduler.scheduled_job(
     "interval",
     seconds=0,
-    id="activity_monitor",
-    next_run_time=datetime.now()
-    + timedelta(seconds=CONF.bam_monitor_task_interval / 2.0),
+    id=JON_ID,
+    next_run_time=datetime.now() + timedelta(seconds=INTERVAL / 2.0),
     max_instances=1,
+    coalesce=True,
 )
 async def task_check_new_activity():
     try:
@@ -107,7 +110,7 @@ async def check_new_activity():
 
         if has_new:
             user_newest_activity_ids[user] = latest
-        await asyncio.sleep(CONF.bam_monitor_task_interval)
+        await asyncio.sleep(INTERVAL)
 
     if user_newest_activity_ids:
         try:

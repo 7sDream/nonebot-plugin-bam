@@ -11,23 +11,28 @@ from ..bilibili.live1 import room_info, RoomInfo
 from ..common import CONF, get_bot, send_exception_to_su
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
+
+JOB_ID = "live_monitor"
 LOGNAME = "BTASK:LIVE"
+INTERVAL = CONF.bam_monitor_task_interval
 
 
 @scheduler.scheduled_job(
     "interval",
     seconds=0,
-    id="live_monitor",
+    id=JOB_ID,
     max_instances=1,
+    coalesce=True,
 )
 async def task_check_all_live_status():
-    # scheduler.pause_job("live_monitor")
+    scheduler.pause_job(JOB_ID)
     try:
         await check_all_live_status()
     except Exception as e:
         logger.warning(f"[{LOGNAME}] {type(e).__name__}: {repr(e)}")
         logger.warning(f"[{LOGNAME}] {traceback.format_exc()}")
         send_exception_to_su(e)
+    scheduler.resume_job(JOB_ID)
 
 
 async def process_user_room_info(user, room: RoomInfo):
@@ -109,7 +114,7 @@ async def check_all_live_status():
         if ret < 0:
             live_become_closed_users.append(user)
 
-        await asyncio.sleep(5)
+        await asyncio.sleep(INTERVAL)
 
     helper.set_user_live_status_in(live_become_open_users)
     helper.clean_user_live_status_in(live_become_closed_users)
