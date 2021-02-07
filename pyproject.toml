@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_bam"
-version = "0.0.3"
+version = "0.0.4"
 description = "Bilibili activity monitor plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
@@ -23,7 +23,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.9"
 peewee = "^3.14.0"
-nonebot2 = {version = "^2.0.0a9.post1", allow-prereleases = true}
+nonebot2 = {version = "^2.0.0a10", allow-prereleases = true}
 aiohttp = {extras = ["speedups"], version = "^3.7.2"}
 nonebot-plugin-apscheduler = "^0.1.2"
 
