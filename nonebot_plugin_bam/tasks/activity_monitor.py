@@ -13,7 +13,7 @@ from ..common import CONF, get_bot, send_exception_to_su
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 
-JON_ID = "activity_monitor"
+JOB_ID = "activity_monitor"
 LOGNAME = "TASK:ACTIVITY"
 INTERVAL = CONF.bam_monitor_task_interval
 
@@ -21,18 +21,20 @@ INTERVAL = CONF.bam_monitor_task_interval
 @scheduler.scheduled_job(
     "interval",
     seconds=0,
-    id=JON_ID,
+    id=JOB_ID,
     next_run_time=datetime.now() + timedelta(seconds=INTERVAL / 2.0),
     max_instances=1,
     coalesce=True,
 )
 async def task_check_new_activity():
+    scheduler.pause_job(JOB_ID)
     try:
         await check_new_activity()
     except Exception as e:
         logger.warning(f"[{LOGNAME}] Outer Exception {type(e).__name__}: {repr(e)}")
         logger.warning(f"[{LOGNAME}] {traceback.format_exc()}")
         send_exception_to_su(e)
+    scheduler.resume_job(JOB_ID)
 
 
 async def process_user_actlist(user, actlist: ActivityList):
