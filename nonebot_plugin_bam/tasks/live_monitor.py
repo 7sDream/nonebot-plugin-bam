@@ -21,7 +21,7 @@ elif CONF.bam_live_api == 2:
     from ..bilibili.live2 import room_info, RoomInfo
 else:
     logger.error("Invalid `BAM_LIVE_API` configure value")
-    exit
+    exit()
 
 
 @scheduler.scheduled_job(
