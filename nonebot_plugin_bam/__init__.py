@@ -5,4 +5,4 @@ from .activity import cmd_bilibili_activity_info
 from .tasks.live_monitor import task_check_all_live_status
 from .tasks.activity_monitor import task_check_new_activity
 
-__version__ = "0.0.2"
+__version__ = "0.0.3"
