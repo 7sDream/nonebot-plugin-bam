@@ -3,9 +3,9 @@ import random
 import operator
 
 from nonebot.adapters.cqhttp import Bot, Event
+from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
 from nonebot.log import logger
 from nonebot.rule import regex, to_me
-from nonebot.permission import GROUP, PRIVATE
 from nonebot import on_command, on_message
 
 from .bilibili.activity import activity

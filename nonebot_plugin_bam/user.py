@@ -1,5 +1,6 @@
 from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.permission import SUPERUSER, GROUP, PRIVATE
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
 from nonebot.rule import to_me
 from nonebot import get_driver, on_command
 

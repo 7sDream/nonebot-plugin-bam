@@ -1,7 +1,8 @@
 import random
 
 from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.permission import SUPERUSER, PRIVATE, GROUP
+from nonebot.permission import SUPERUSER
+from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
 from nonebot.rule import to_me
 from nonebot.log import logger
 from nonebot import get_driver, on_command
