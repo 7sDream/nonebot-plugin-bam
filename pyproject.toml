@@ -1,12 +1,12 @@
 [tool.poetry]
 name = "nonebot_plugin_bam"
-version = "0.0.5"
+version = "0.1.0"
 description = "Bilibili activity monitor plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/7sDream/nonebot_plugin_bam"
-repository = "https://github.com/7sDream/nonebot_plugin_bam"
+homepage = "https://github.com/7sDream/nonebot-plugin-bam"
+repository = "https://github.com/7sDream/nonebot-plugin-bam"
 keywords = ["nonebot", "bilibili", "qqbot"]
 classifiers = [
     "Development Status :: 3 - Alpha",
