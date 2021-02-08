@@ -6,7 +6,17 @@ B 站用户监视器，自动监控用户的动态和直播状态，在有新动
 
 ## 功能示例
 
-懒得截图，以后再说。
+### 直播提醒
+
+![screenshot-live]
+
+### 动态提醒
+
+![screenshot-act-normal]
+
+![screenshot-act-repost]
+
+*特定用户 at 特定群友功能暂时没来得及做命令，目前需要直接改数据库，目前可以假装这个功能不存在。*
 
 ## 使用
 
@@ -159,3 +169,7 @@ ANYONE
 ## LICENSE
 
 MIT.
+
+[screenshot-live]: https://rikka.7sdre.am/files/af1c9c5a-5f8c-40df-b199-e97525368ec9.png
+[screenshot-act-normal]: https://rikka.7sdre.am/files/5350ce1c-63f6-4f43-abcc-004e9c722063.png
+[screenshot-act-repost]: https://rikka.7sdre.am/files/9c43a32b-2df7-4b93-be53-22c50a981c63.png
