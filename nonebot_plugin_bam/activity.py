@@ -2,7 +2,7 @@ import re
 import random
 import operator
 
-from nonebot.adapters.cqhttp import Bot, Event
+from nonebot.adapters.cqhttp import Bot, Event, Message
 from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
 from nonebot.log import logger
 from nonebot.rule import regex, to_me
@@ -41,4 +41,4 @@ async def bilibili_activity_info(bot: Bot, event: Event, state: dict):
     username = getattr(act, "username", f"ID 为 {act.uid} 的用户")
     messages.extend([f"{username} 的动态", "", act.display()])
 
-    return await cmd_bilibili_activity_info.finish("\n".join(messages))
+    return await cmd_bilibili_activity_info.finish(Message("\n".join(messages)))

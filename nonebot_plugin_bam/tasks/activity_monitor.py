@@ -63,24 +63,25 @@ async def process_user_actlist(user, actlist: ActivityList):
                 if act.id > latest:
                     has_new = True
                     latest = act.id
-                    message = f"叮铃铃铃！{user.nickname} 有新动态！\n{act.display()}"
                     if bot is not None:
+                        group_message = f"叮铃铃铃！{user.nickname} 有新动态！\n{act.display()}"
                         for link in user.groups:
                             group_id = link.group_id
                             at_users = link.at_users
+                            the_group_message = group_message
                             if at_users:
-                                message += "\n"
+                                the_group_message += "\n"
                                 for at_user in at_users.split(";"):
-                                    message += f"[CQ:at,qq={at_user}]"
-                            logger.info(f"Send activity message: {message}")
+                                    the_group_message += f"[CQ:at,qq={at_user}]"
+                            logger.info(f"Send activity message: {the_group_message}")
                             try:
                                 await bot.send_group_msg(
                                     group_id=group_id,
-                                    message=message,
+                                    message=the_group_message,
                                     auto_escape=False,
                                 )
                             except Exception as e:
-                                send_exception_to_su(e, message)
+                                send_exception_to_su(e, the_group_message)
     elif hasattr(actlist, "code"):
         logger.info(
             f"[{LOGNAME}] check {user.nickname}({user.uid}) failed: {actlist.code} {actlist.message}"

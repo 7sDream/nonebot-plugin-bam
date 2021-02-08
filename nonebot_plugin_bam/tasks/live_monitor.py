@@ -70,21 +70,23 @@ async def process_user_room_info(user, room: RoomInfo):
 
         bot = get_bot()
         if bot is not None and len(message) > 0:
+            group_message = "\n".join(message)
             for link in user.groups:
                 group_id = link.group_id
                 at_users = link.at_users
+                the_group_message = group_message
                 if at_users:
-                    message.append("")
+                    the_group_message += "\n"
                     for at_user in at_users.split(";"):
-                        message[-1] += f"[CQ:at,qq={at_user}]"
+                        the_group_message += f"[CQ:at,qq={at_user}]"
                 try:
                     await bot.send_group_msg(
                         group_id=group_id,
-                        message="\n".join(message),
+                        message=the_group_message,
                         auto_escape=False,
                     )
                 except Exception as e:
-                    send_exception_to_su(e, "\n".join(message))
+                    send_exception_to_su(e, "\n".join(the_group_message))
     elif hasattr(room, "code"):
         logger.warning(
             f"[{LOGNAME}] check {user.nickname}({user.uid})'s room failed: {room.code} {room.message}"
