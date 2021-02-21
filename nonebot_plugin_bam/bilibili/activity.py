@@ -2,12 +2,15 @@ import json
 
 from nonebot.log import logger
 
+from ..common import CONF
 from .api import APIResult
+
+MAX_LENGTH = CONF.bam_activity_content_max_length
 
 
 def shorten(s):
-    if len(s) > 120:
-        return s[0:120] + "...(内容过长省略)"
+    if MAX_LENGTH > 0 and len(s) > MAX_LENGTH:
+        return s[0:MAX_LENGTH] + "...(内容过长省略)"
     return s
 
 
@@ -88,7 +91,7 @@ class RepostActivity(Activity):
 
     def __init__(self, card):
         super().__init__(card)
-        self.content = shorten(self._card_data["item"]["content"])
+        self.content = self._card_data["item"]["content"]
         data = {
             "desc": card["desc"]["origin"],
             "card": self._card_data["origin"]
@@ -108,7 +111,7 @@ class RepostActivity(Activity):
             [
                 f"转发了 {origin_user} 的动态，并说：",
                 "",
-                f"{self.content}",
+                f"{shorten(self.content)}",
                 "",
                 f"动态链接：{self.url()}",
                 "==========",
@@ -124,20 +127,20 @@ class PictureActivity(Activity):
 
     def __init__(self, card):
         super().__init__(card)
-        self.content = shorten(self._card_data["item"]["description"])
+        self.content = self._card_data["item"]["description"]
         self.pics = [pic["img_src"] for pic in self._card_data["item"]["pictures"]]
 
     def display(self):
         messages = [
-            f"{self.content}",
+            f"{shorten(self.content)}",
             "",
             f"附带 {len(self.pics)} 张图片：",
         ]
         messages.extend(
-            [f"[CQ:image,file={pic},timeout=3]" for _, pic in zip(range(2), self.pics)]
+            [f"[CQ:image,file={pic},timeout=10]" for _, pic in zip(range(2), self.pics)]
         )
         if len(self.pics) > 2:
-            messages.append(f"避免消息过长，余下 {len(self.pics) - 2} 张图片不转发，请自行点击链接查看")
+            messages.append(f"避免消息过长，余下 {len(self.pics) - 2} 张图片不转发，请点击链接查看")
         messages.append("")
         messages.append(f"动态链接：{self.url()}")
         return "\n".join(messages)
@@ -148,10 +151,10 @@ class TextActivity(Activity):
 
     def __init__(self, card):
         super().__init__(card)
-        self.content = shorten(self._card_data["item"]["content"])
+        self.content = self._card_data["item"]["content"]
 
     def display(self):
-        return "\n".join([f"{self.content}", "", f"动态链接：{self.url()}"])
+        return "\n".join([f"{shorten(self.content)}", "", f"动态链接：{self.url()}"])
 
 
 class VideoActivity(Activity):
@@ -163,8 +166,8 @@ class VideoActivity(Activity):
         self.username = self._card_data["owner"]["name"]
         self.av = self._card_data["aid"]
         self.title = self._card_data["title"]
-        self.desc = shorten(self._card_data["desc"])
-        self.content = shorten(self._card_data["dynamic"])
+        self.desc = self._card_data["desc"]
+        self.content = self._card_data["dynamic"]
         self.video_url = f"https://bilibili.com/av{self.av}"
 
     def display(self):
@@ -172,12 +175,12 @@ class VideoActivity(Activity):
             f"投稿了视频：{self.title}",
             "",
             f"简介：",
-            self.desc,
+            shorten(self.desc),
             "",
         ]
 
-        if self.content:
-            messages.extend([f"动态内容：{self.content}", ""])
+        if self.content and self.content != self.desc:
+            messages.extend([f"动态内容：{shorten(self.content)}", ""])
 
         messages.extend([f"视频链接：{self.video_url}", f"动态链接：{self.url()}"])
 
@@ -193,7 +196,7 @@ class ArticleActivity(Activity):
         self.username = self._card_data["author"]["name"]
         self.aid = self._card_data["id"]
         self.title = self._card_data["title"]
-        self.summary = shorten(self._card_data["summary"])
+        self.summary = self._card_data["summary"]
         self.cover = self._card_data["banner_url"]
         self.article_url = f"https://www.bilibili.com/read/cv{self.aid}"
 
@@ -206,7 +209,7 @@ class ArticleActivity(Activity):
         messages.extend(
             [
                 "",
-                f"摘要：{self.summary}",
+                f"摘要：{shorten(self.summary)}",
                 "",
                 f"文章链接：{self.article_url}",
                 f"动态链接：{self.url()}",
