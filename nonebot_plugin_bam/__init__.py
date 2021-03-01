@@ -6,3 +6,9 @@ from .tasks.live_monitor import task_check_all_live_status
 from .tasks.activity_monitor import task_check_new_activity
 
 __version__ = "0.1.3"
+
+from nonebot import export
+from .bilibili.activity import Activity, OneActivity
+
+export().Activity = Activity
+export().OneActivity = OneActivity

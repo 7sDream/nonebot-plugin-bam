@@ -8,7 +8,7 @@ from nonebot.log import logger
 from nonebot.adapters.cqhttp import Bot
 
 from ..database import helper
-from ..bilibili.activity import activity_list, ActivityList
+from ..bilibili.activity import activity_list, ActivityList, H5Activity
 from ..common import CONF, get_bot, send_exception_to_su
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
@@ -65,6 +65,9 @@ async def process_user_actlist(user, actlist: ActivityList):
                     latest = act.id
                     if bot is not None:
                         group_message = f"叮铃铃铃！{user.nickname} 有新动态！\n{act.display()}"
+                        h5_share_card = None
+                        if isinstance(act, H5Activity):
+                            h5_share_card = act.h5_share_card()
                         for link in user.groups:
                             group_id = link.group_id
                             at_users = link.at_users
@@ -82,6 +85,15 @@ async def process_user_actlist(user, actlist: ActivityList):
                                 )
                             except Exception as e:
                                 send_exception_to_su(e, the_group_message)
+                            if h5_share_card is not None:
+                                try:
+                                    await bot.send_group_msg(
+                                        group_id=group_id,
+                                        message=h5_share_card,
+                                        auto_escape=False,
+                                    )
+                                except Exception as e:
+                                    pass
     elif hasattr(actlist, "code"):
         logger.info(
             f"[{LOGNAME}] check {user.nickname}({user.uid}) failed: {actlist.code} {actlist.message}"

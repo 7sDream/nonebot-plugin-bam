@@ -6,7 +6,6 @@ from peewee import Model, SqliteDatabase, PeeweeException
 
 from ..common import CONF, DRIVER
 
-
 DB = SqliteDatabase(
     CONF.bam_db_file,
     pragmas={

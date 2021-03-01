@@ -8,7 +8,7 @@ from nonebot.log import logger
 from nonebot.rule import regex, to_me
 from nonebot import on_command, on_message
 
-from .bilibili.activity import activity
+from .bilibili.activity import activity, H5Activity
 
 from .common import G_CONF, SEP, RE_NUMBER
 
@@ -41,4 +41,12 @@ async def bilibili_activity_info(bot: Bot, event: Event, state: dict):
     username = getattr(act, "username", f"ID 为 {act.uid} 的用户")
     messages.extend([f"{username} 的动态", "", act.display()])
 
-    return await cmd_bilibili_activity_info.finish(Message("\n".join(messages)))
+    h5_share_card = None
+    if isinstance(act, H5Activity):
+        h5_share_card = act.h5_share_card()
+
+    if h5_share_card is not None:
+        await cmd_bilibili_activity_info.send(Message("\n".join(messages)))
+        await cmd_bilibili_activity_info.finish(Message(h5_share_card))
+    else:
+        await cmd_bilibili_activity_info.finish(Message("\n".join(messages)))

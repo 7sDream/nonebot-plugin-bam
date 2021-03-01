@@ -29,6 +29,13 @@ RE_NUMBER = re.compile(r"^\d+$")
 # Common functions
 
 
+def cq_encode(s: str) -> str:
+    s = s.replace("&", "&amp;")
+    s = s.replace("[", "&#91;")
+    s = s.replace("]", "&#93;")
+    return s.replace(",", "&#44;")
+
+
 async def exception_to_su_real(e, *messages):
     etype = type(e).__name__
     emsg = getattr(e, "message", repr(e))

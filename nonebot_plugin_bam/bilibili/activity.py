@@ -2,7 +2,7 @@ import json
 
 from nonebot.log import logger
 
-from ..common import CONF
+from ..common import CONF, cq_encode
 from .api import APIResult
 
 MAX_LENGTH = CONF.bam_activity_content_max_length
@@ -242,6 +242,34 @@ class LiveRoomActivity(Activity):
                 f"动态链接：{self.url()}",
             ]
         )
+
+
+class H5Activity(Activity):
+    TYPE_VALUE = 2048
+
+    def __init__(self, card):
+        super().__init__(card)
+        self.uid = self._card_data["user"]["uid"]
+        self.username = self._card_data["user"]["uname"]
+        self.content = self._card_data["vest"]["content"]
+        self.h5_title = self._card_data["sketch"]["title"]
+        self.h5_desc = self._card_data["sketch"]["desc_text"]
+        self.h5_url = self._card_data["sketch"]["target_url"]
+        self.h5_cover = self._card_data["sketch"]["cover_url"]
+
+    def display(self):
+        return "\n".join(
+            [
+                f"{shorten(self.content)}",
+                "",
+                f"附带一个 H5 页面：{self.h5_title} - {self.h5_desc}",
+                "",
+                f"动态链接：{self.url()}",
+            ]
+        )
+
+    def h5_share_card(self):
+        return f"[CQ:share,url={cq_encode(self.h5_url)},title={cq_encode(self.h5_title)},image={cq_encode(self.h5_cover)}]"
 
 
 class UnTestedActivity(Activity):
