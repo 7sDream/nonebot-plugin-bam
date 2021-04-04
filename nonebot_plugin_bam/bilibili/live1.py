@@ -20,6 +20,7 @@ class RoomInfo(APIResult):
             self.cover = data["cover"]
             self.url = data["url"]
 
+
 async def room_info(uid=None, rid=None) -> RoomInfo:
     room = await RoomInfo.of(uid=uid)
     return room

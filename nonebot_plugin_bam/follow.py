@@ -1,17 +1,17 @@
+from nonebot import get_driver, on_command
 from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.permission import SUPERUSER
 from nonebot.adapters.cqhttp.permission import GROUP
 from nonebot.log import logger
-from nonebot import get_driver, on_command
+from nonebot.permission import SUPERUSER
 
-from .common import G_CONF, SEP, RE_NUMBER
-from .database import helper
 from .bilibili.user import user_info
+from .common import RE_NUMBER
+from .database import helper
 
 # ===== Follower list =====
 
 cmd_follower_list = on_command(
-    SEP.join(["bam", "follower", "list"]), permission=SUPERUSER | GROUP
+    ("bam", "follower", "list"), permission=SUPERUSER | GROUP
 )
 
 
@@ -106,9 +106,7 @@ class CommandInfo:
 
 # ===== Follower add =====
 
-cmd_follower_add = on_command(
-    SEP.join(["bam", "follower", "add"]), permission=SUPERUSER | GROUP
-)
+cmd_follower_add = on_command(("bam", "follower", "add"), permission=SUPERUSER | GROUP)
 
 
 @cmd_follower_add.handle()
@@ -142,7 +140,7 @@ async def follower_add(bot: Bot, event: Event, state: dict):
 
 
 cmd_follower_remove = on_command(
-    SEP.join(["bam", "follower", "remove"]), permission=SUPERUSER | GROUP
+    ("bam", "follower", "remove"), permission=SUPERUSER | GROUP
 )
 
 

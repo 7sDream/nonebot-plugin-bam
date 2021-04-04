@@ -21,7 +21,7 @@ B 站用户监视器，自动监控用户的动态和直播状态，在有新动
 ## 使用
 
 ```bash
-pip install nonebot-plugin-bam
+poetry add nonebot-plugin-bam
 ```
 
 ```python
@@ -47,6 +47,10 @@ nonebot.run()
 其中 `.env` 文件除了 nonebot 的常规配置项外，还有可添加以下配置属性（下面展示的是默认值）：
 
 ```env
+# 我个人喜欢用 / 来做分隔符，下面的命令列表也是以 / 为例，可以按照自己喜欢的调整
+COMMAND_START=["/"]
+COMMAND_SEP=["/"]
+
 # 数据落地文件路径，建议设置一下。
 # 用默认值（储存在内存中）的话一重启数据就没了
 BAM_DB_FILE=":memory:"

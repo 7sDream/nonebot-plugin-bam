@@ -6,11 +6,10 @@ from nonebot.adapters.cqhttp import Bot
 
 from .config import Config
 
-DRIVER = G_CONF = SEP = CONF = None
+DRIVER = G_CONF = CONF = None
 try:
     DRIVER = nonebot.get_driver()
     G_CONF = DRIVER.config
-    SEP = next(iter(G_CONF.command_sep))
     CONF = Config(**G_CONF.dict())
 except ValueError:
     pass

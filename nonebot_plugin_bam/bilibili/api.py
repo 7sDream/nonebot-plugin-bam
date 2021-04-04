@@ -1,9 +1,9 @@
-import asyncio
-from aiohttp import ClientSession, CookieJar, ClientTimeout, TCPConnector
-from http.cookies import SimpleCookie
 import abc
+import asyncio
 import time
+from http.cookies import SimpleCookie
 
+from aiohttp import ClientSession, ClientTimeout, CookieJar, TCPConnector
 from nonebot.log import logger
 
 from ..common import DRIVER

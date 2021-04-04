@@ -1,13 +1,13 @@
-import json
 import asyncio
+import json
 import traceback
 
 from nonebot import require
-from nonebot.log import logger
 from nonebot.adapters.cqhttp import Bot
+from nonebot.log import logger
 
-from ..database import helper
 from ..common import CONF, get_bot, send_exception_to_su
+from ..database import helper
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 
@@ -16,9 +16,9 @@ LOGNAME = "BTASK:LIVE"
 INTERVAL = CONF.bam_monitor_task_interval
 
 if CONF.bam_live_api == 1:
-    from ..bilibili.live1 import room_info, RoomInfo
+    from ..bilibili.live1 import RoomInfo, room_info
 elif CONF.bam_live_api == 2:
-    from ..bilibili.live2 import room_info, RoomInfo
+    from ..bilibili.live2 import RoomInfo, room_info
 else:
     logger.error("Invalid `BAM_LIVE_API` configure value")
     exit()

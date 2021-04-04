@@ -1,15 +1,15 @@
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
-from nonebot.rule import to_me
 from nonebot import get_driver, on_command
+from nonebot.adapters.cqhttp import Bot, Event
+from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
+from nonebot.permission import SUPERUSER
+from nonebot.rule import to_me
 
-from .common import G_CONF, SEP, RE_NUMBER
-from .database import helper
 from .bilibili.user import user_info
+from .common import RE_NUMBER
+from .database import helper
 
 cmd_user_fetch = on_command(
-    SEP.join(["bam", "user", "fetch"]), rule=to_me(), permission=SUPERUSER
+    ("bam", "user", "fetch"), rule=to_me(), permission=SUPERUSER
 )
 
 

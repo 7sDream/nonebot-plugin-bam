@@ -1,11 +1,11 @@
 from collections import defaultdict
 from typing import Dict
-from peewee import JOIN
 
 from nonebot.log import logger
+from peewee import JOIN
 
 from .db import DB
-from .tables import Group, FollowLink, BilibiliUser, BilibiliUserStatus
+from .tables import BilibiliUser, BilibiliUserStatus, FollowLink, Group
 
 
 def log_sql(s):

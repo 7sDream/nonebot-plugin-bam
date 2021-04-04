@@ -1,19 +1,18 @@
-import re
-import random
 import operator
+import random
+import re
 
+from nonebot import on_command, on_message
 from nonebot.adapters.cqhttp import Bot, Event, Message
 from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
 from nonebot.log import logger
 from nonebot.rule import regex, to_me
-from nonebot import on_command, on_message
 
-from .bilibili.activity import activity, H5Activity
-
-from .common import G_CONF, SEP, RE_NUMBER
+from .bilibili.activity import H5Activity, activity
+from .common import RE_NUMBER
 
 cmd_bilibili_activity_info = on_command(
-    SEP.join(["bam", "act"]), rule=to_me(), permission=GROUP | PRIVATE, block=True
+    ("bam", "act"), rule=to_me(), permission=GROUP | PRIVATE, block=True
 )
 
 

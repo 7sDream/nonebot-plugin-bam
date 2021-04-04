@@ -1,2 +1,2 @@
 from .db import DB
-from .tables import Group, BilibiliUser, BilibiliUserStatus, FollowLink
+from .tables import BilibiliUser, BilibiliUserStatus, FollowLink, Group

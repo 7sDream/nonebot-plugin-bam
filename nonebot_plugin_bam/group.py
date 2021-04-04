@@ -1,24 +1,24 @@
 import random
 
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.permission import SUPERUSER
-from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
-from nonebot.rule import to_me
-from nonebot.log import logger
 from nonebot import get_driver, on_command
+from nonebot.adapters.cqhttp import Bot, Event
+from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
+from nonebot.log import logger
+from nonebot.permission import SUPERUSER
+from nonebot.rule import to_me
 
-from .common import G_CONF, SEP, RE_NUMBER
+from .common import RE_NUMBER
 from .database import helper
 
 # ===== Group list =====
 
-cmd_group_list = on_command(SEP.join(["bam", "group", "list"]), permission=SUPERUSER)
+cmd_group_list = on_command(("bam", "group", "list"), permission=SUPERUSER)
 
 
 @cmd_group_list.handle()
 async def group_list(bot: Bot, event: Event, state: dict):
     if not await PRIVATE(bot, event):
-        cmd_group_list.finish("只能在私聊中使用此命令")
+        return await cmd_group_list.finish("只能在私聊中使用此命令")
 
     message = ["当前正为以下群提供服务:"]
     message.extend(
@@ -31,14 +31,13 @@ async def group_list(bot: Bot, event: Event, state: dict):
 
 # ===== Group add =====
 
-cmd_group_add = on_command(SEP.join(["bam", "group", "add"]), permission=SUPERUSER)
+cmd_group_add = on_command(("bam", "group", "add"), permission=SUPERUSER)
 
 
 @cmd_group_add.handle()
 async def group_add(bot: Bot, event: Event, state: dict):
     if not await GROUP(bot, event):
-        await cmd_group_add.finish("只能在群聊中使用此命令")
-        return
+        return await cmd_group_add.finish("只能在群聊中使用此命令")
 
     gid = event.group_id
 
@@ -63,16 +62,13 @@ async def group_add(bot: Bot, event: Event, state: dict):
 
 # ===== Group remove =====
 
-cmd_group_remove = on_command(
-    SEP.join(["bam", "group", "remove"]), permission=SUPERUSER
-)
+cmd_group_remove = on_command(("bam", "group", "remove"), permission=SUPERUSER)
 
 
 @cmd_group_remove.handle()
 async def group_remove(bot: Bot, event: Event, state: dict):
     if not await GROUP(bot, event):
-        await cmd_group_remove.finish("只能在群聊中使用此命令")
-        return
+        return await cmd_group_remove.finish("只能在群聊中使用此命令")
 
     args = str(event.message).strip()
     if args == "confirm":

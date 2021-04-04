@@ -1,8 +1,7 @@
 import importlib.resources
 
 from nonebot.log import logger
-
-from peewee import Model, SqliteDatabase, PeeweeException
+from peewee import Model, PeeweeException, SqliteDatabase
 
 from ..common import CONF, DRIVER
 
@@ -22,8 +21,8 @@ class BaseModel(Model):
 
 
 def init_database():
-    from .tables import Group, BilibiliUser, BilibiliUserStatus, FollowLink
     from . import helper
+    from .tables import BilibiliUser, BilibiliUserStatus, FollowLink, Group
 
     try:
         DB.create_tables([Group, BilibiliUser, BilibiliUserStatus, FollowLink])
