@@ -14,6 +14,9 @@ LOGNAME = "BILIBILI:API"
 
 async def init_client():
     global client
+    if client is not None:
+        return
+
     cookie = CookieJar()
     cookie.update_cookies(SimpleCookie("PVID=2; Domain=live.bilibili.com; Path=/;"))
 
@@ -47,26 +50,28 @@ class APIResult(abc.ABC):
         params["ts"] = str(time.time())
         try:
             url = cls.URL.format(**params)
-            if cls.QUERY:
-                query = {k: v.format(**params) for k, v in cls.QUERY}
-                if cls.WBI:
+            if hasattr(cls, "QUERY"):
+                query = {k: v.format(**params) for k, v in cls.QUERY.items()}
+                if getattr(cls, "WBI", False):
                     from .wbi import wbi_token
                     token = await wbi_token()
                     token.add_signature(query)
-                url += '?' + urllib.parser.urlencode(query)
+                url += '?' + urllib.parse.urlencode(query)
             logger.info(f"[{LOGNAME}] request: {url}")
             async with client.get(url) as resp:
+                logger.debug(f"[{LOGNAME}:{cls.__name__}] {url}: response {resp}")
                 data = await resp.json()
+                logger.debug(f"[{LOGNAME}:{cls.__name__}] {url}: body {data}")
                 try:
                     del params["ts"]
                     instance.__initialize__(data, **params)
                 except Exception as e:
                     instance.ok = False
-                    logger.warning(
+                    logger.info(
                         f"[{LOGNAME}:{cls.__name__}] {url} {type(e).__name__} {repr(e)}, response json {data}"
                     )
         except Exception as e:
-            logger.warning(
+            logger.info(
                 f"[{LOGNAME}:{cls.__name__}] request failed {type(e).__name__}: {repr(e)}"
             )
         return instance

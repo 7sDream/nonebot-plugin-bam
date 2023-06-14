@@ -1,29 +1,13 @@
 import json
 import os
 
-import pytest
-
 
 def load_data(name):
     with open(os.path.join("tests", "act_data", name), "rb") as f:
         j = json.load(f)
         return j["data"]["card"]
 
-
-@pytest.fixture
-def init():
-    import nonebot
-    from nonebot.adapters.console import Adapter as ConsoleAdapter
-
-    nonebot.init()
-    driver = nonebot.get_driver()
-    driver.register_adapter(ConsoleAdapter)
-    nonebot.load_builtin_plugins()
-    nonebot.load_plugin("nonebot_plugin_bam")
-
-    nonebot.require("nonebot_plugin_bam")
-
-def test_h5(init):
+def test_h5():
     from nonebot_plugin_bam.bilibili.activity import Activity
 
     act = Activity(load_data("h5.json"))

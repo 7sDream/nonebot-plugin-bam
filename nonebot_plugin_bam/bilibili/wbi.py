@@ -10,8 +10,8 @@ from .api import APIResult
 def get_token(url: str):
     return url.split("/").pop()[:-4]
 
-def remove_chars(s, chars):
-    s.translate({ ord(c): None for c in chars })
+def remove_chars(s: str, chars: str) -> str:
+    return s.translate({ ord(c): None for c in chars })
 
 class WbiToken(APIResult):
     URL = "https://api.bilibili.com/x/web-interface/nav"
@@ -25,17 +25,16 @@ class WbiToken(APIResult):
 
     def __init__(self):
         super().__init__()
+        self.date = datetime.date.today()
 
     def __initialize__(self, body):
-        self.date = datetime.date.today()
         wbi = body["data"]["wbi_img"]
         self.token = get_token(wbi["img_url"]) + get_token(wbi["sub_url"])
+        self.key = self._calc_key()
+        self.ok = True
 
-    def get_key(self) -> str:
-        if not self.ok:
-            return ""
-
-        ''.join([self.token[i] for i in itertools.islice(self.KEY_ENC_TABLE, 32)])
+    def _calc_key(self) -> str:
+        return ''.join([self.token[i] for i in itertools.islice(self.KEY_ENC_TABLE, 32)])
 
     def add_signature(self, query: dict[str, str]):
         if not self.ok:
@@ -45,7 +44,7 @@ class WbiToken(APIResult):
         final = '&'.join([
             urllib.parse.quote_plus(k) + "=" + urllib.parse.quote_plus(remove_chars(v, "!'()*"))
             for k, v in sorted(query.items())
-        ]) + self.get_key()
+        ]) + self.key
         query["w_rid"] = hashlib.md5(final.encode()).hexdigest()
 
 _wbi_token = None

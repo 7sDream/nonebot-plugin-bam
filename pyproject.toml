@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "nonebot_plugin_bam"
-version = "0.1.5"
+version = "0.2.0"
 description = "Bilibili activity monitor plugin for nonebot"
 authors = ["7sDream <i@7sdre.am>"]
 license = "MIT"
@@ -26,18 +26,16 @@ peewee = "^3.16.2"
 nonebot2 = {extras = ["fastapi"], version = "^2.0.0"}
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 nonebot-plugin-apscheduler = "^0.3.0"
-pydantic = "1.10.9"
+pydantic = "^1.10.9"
 nonebot-adapter-onebot = "^2.2.3"
 
-
-[tool.poetry.dev-dependencies]
-pylint = "^2.7.4"
-black = "^20.8b1"
-rope = "^0.18.0"
-pytest = "^6.2.3"
-
 [tool.poetry.group.dev.dependencies]
+pylint = "^2.17.4"
+black = "^23.3.0"
+rope = "^1.8.0"
+pytest = "^7.3.2"
 nonebot-adapter-console = "^0.3.2"
+pytest-asyncio = "^0.21.0"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
