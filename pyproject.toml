@@ -23,7 +23,7 @@ include = [
 [tool.poetry.dependencies]
 python = "^3.9"
 peewee = "^3.16.2"
-nonebot2 = {extras = ["fastapi"], version = "^2.0.0"}
+nonebot2 = "^2.0.0"
 aiohttp = {extras = ["speedups"], version = "^3.8.4"}
 nonebot-plugin-apscheduler = "^0.3.0"
 pydantic = "^1.10.9"
@@ -36,6 +36,7 @@ rope = "^1.8.0"
 pytest = "^7.3.2"
 nonebot-adapter-console = "^0.3.2"
 pytest-asyncio = "^0.21.0"
+nonebot2 = {version = "^2.0.0", extras = ["fastapi"]}
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
