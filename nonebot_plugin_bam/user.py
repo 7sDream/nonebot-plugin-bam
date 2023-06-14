@@ -1,6 +1,5 @@
-from nonebot import get_driver, on_command
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import GROUP, PRIVATE, Bot, Event
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 
@@ -14,7 +13,7 @@ cmd_user_fetch = on_command(
 
 
 @cmd_user_fetch.handle()
-async def user_fetch(bot: Bot, event: Event, state: dict):
+async def user_fetch(bot: Bot, event: Event):
     args = str(event.message).strip()
 
     if RE_NUMBER.match(args):

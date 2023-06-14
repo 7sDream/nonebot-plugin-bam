@@ -26,12 +26,12 @@ poetry add nonebot-plugin-bam
 
 ```python
 import nonebot
-from nonebot.adapters.cqhttp import Bot as CQHTTPBot
+from nonebot.adapters.onebot.v11 import Adapter
 
 nonebot.init(_env_file=".env")
 
 driver = nonebot.get_driver()
-driver.register_adapter("cqhttp", CQHTTPBot)
+driver.register_adapter(Adapter)
 
 nonebot.load_builtin_plugins()
 

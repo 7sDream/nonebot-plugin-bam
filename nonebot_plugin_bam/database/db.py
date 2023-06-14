@@ -1,9 +1,8 @@
-import importlib.resources
-
+from nonebot import get_driver
 from nonebot.log import logger
 from peewee import Model, PeeweeException, SqliteDatabase
 
-from ..common import CONF, DRIVER
+from ..config import CONF
 
 DB = SqliteDatabase(
     CONF.bam_db_file,
@@ -50,4 +49,4 @@ def connect_database():
     init_database()
 
 
-DRIVER.on_startup(connect_database)
+get_driver().on_startup(connect_database)

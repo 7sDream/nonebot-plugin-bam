@@ -1,12 +1,11 @@
 import abc
-import asyncio
 import time
+import urllib
 from http.cookies import SimpleCookie
 
 from aiohttp import ClientSession, ClientTimeout, CookieJar, TCPConnector
+from nonebot import get_driver
 from nonebot.log import logger
-
-from ..common import DRIVER
 
 client: ClientSession = None
 
@@ -48,6 +47,13 @@ class APIResult(abc.ABC):
         params["ts"] = str(time.time())
         try:
             url = cls.URL.format(**params)
+            if cls.QUERY:
+                query = {k: v.format(**params) for k, v in cls.QUERY}
+                if cls.WBI:
+                    from .wbi import wbi_token
+                    token = await wbi_token()
+                    token.add_signature(query)
+                url += '?' + urllib.parser.urlencode(query)
             logger.info(f"[{LOGNAME}] request: {url}")
             async with client.get(url) as resp:
                 data = await resp.json()
@@ -66,4 +72,4 @@ class APIResult(abc.ABC):
         return instance
 
 
-DRIVER.on_startup(init_client)
+get_driver().on_startup(init_client)

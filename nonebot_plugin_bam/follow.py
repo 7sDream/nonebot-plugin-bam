@@ -1,7 +1,6 @@
-from nonebot import get_driver, on_command
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.adapters.cqhttp.permission import GROUP
-from nonebot.log import logger
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, Event
+from nonebot.adapters.onebot.v11.permission import GROUP
 from nonebot.permission import SUPERUSER
 
 from .bilibili.user import user_info
@@ -16,7 +15,7 @@ cmd_follower_list = on_command(
 
 
 @cmd_follower_list.handle()
-async def follower_list(bot: Bot, event: Event, state: dict):
+async def follower_list(bot: Bot, event: Event):
     gid = None
     if await GROUP(bot, event):
         gid = event.group_id
@@ -48,7 +47,7 @@ async def follower_list(bot: Bot, event: Event, state: dict):
 
 
 class CommandInfo:
-    def __init__(self, cmd, bot, event):
+    def __init__(self, cmd, bot: Bot, event: Event):
         self.cmd = cmd
         self.bot = bot
         self.event = event
@@ -110,7 +109,7 @@ cmd_follower_add = on_command(("bam", "follower", "add"), permission=SUPERUSER |
 
 
 @cmd_follower_add.handle()
-async def follower_add(bot: Bot, event: Event, state: dict):
+async def follower_add(bot: Bot, event: Event):
 
     command = CommandInfo(cmd_follower_add, bot, event)
 
@@ -138,6 +137,7 @@ async def follower_add(bot: Bot, event: Event, state: dict):
     helper.add_link(command.group, user)
     return await cmd_follower_add.finish(f"成功加入关注列表")
 
+# ===== Follower remove =====
 
 cmd_follower_remove = on_command(
     ("bam", "follower", "remove"), permission=SUPERUSER | GROUP
@@ -145,7 +145,7 @@ cmd_follower_remove = on_command(
 
 
 @cmd_follower_remove.handle()
-async def follower_remove(bot: Bot, event: Event, state: dict):
+async def follower_remove(bot: Bot, event: Event):
     command = CommandInfo(cmd_follower_remove, bot, event)
 
     if not await command.check():
@@ -158,6 +158,5 @@ async def follower_remove(bot: Bot, event: Event, state: dict):
             await cmd_follower_remove.finish(
                 f"成功将用户 {following.uid}({following.nickname}) 从关注列表移除"
             )
-            return
 
     await cmd_follower_remove.finish(f"用户 {command.uid} 不在关注列表中")

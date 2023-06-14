@@ -11,3 +11,5 @@ class Config(BaseSettings):
 
     class Config:
         extra = "ignore"
+
+CONF = Config(**nonebot.get_driver().config.dict())

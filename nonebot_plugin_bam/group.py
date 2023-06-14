@@ -1,11 +1,10 @@
 import random
 
-from nonebot import get_driver, on_command
-from nonebot.adapters.cqhttp import Bot, Event
-from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import GROUP, PRIVATE, Bot, Event
 from nonebot.log import logger
 from nonebot.permission import SUPERUSER
-from nonebot.rule import to_me
+from nonebot.typing import T_State
 
 from .common import RE_NUMBER
 from .database import helper
@@ -16,7 +15,7 @@ cmd_group_list = on_command(("bam", "group", "list"), permission=SUPERUSER)
 
 
 @cmd_group_list.handle()
-async def group_list(bot: Bot, event: Event, state: dict):
+async def group_list(bot: Bot, event: Event):
     if not await PRIVATE(bot, event):
         return await cmd_group_list.finish("只能在私聊中使用此命令")
 
@@ -35,7 +34,7 @@ cmd_group_add = on_command(("bam", "group", "add"), permission=SUPERUSER)
 
 
 @cmd_group_add.handle()
-async def group_add(bot: Bot, event: Event, state: dict):
+async def group_add(bot: Bot, event: Event):
     if not await GROUP(bot, event):
         return await cmd_group_add.finish("只能在群聊中使用此命令")
 
@@ -66,7 +65,7 @@ cmd_group_remove = on_command(("bam", "group", "remove"), permission=SUPERUSER)
 
 
 @cmd_group_remove.handle()
-async def group_remove(bot: Bot, event: Event, state: dict):
+async def group_remove(bot: Bot, event: Event, state: T_State):
     if not await GROUP(bot, event):
         return await cmd_group_remove.finish("只能在群聊中使用此命令")
 
@@ -78,9 +77,8 @@ async def group_remove(bot: Bot, event: Event, state: dict):
         state["code"] = code
         await cmd_group_remove.pause(f"请回复以下随机码来确认删除操作: {code}")
 
-
 @cmd_group_remove.got("input_code")
-async def group_remove_confirm(bot: Bot, event: Event, state: dict):
+async def group_remove_confirm(bot: Bot, event: Event, state: T_State):
     code = state["code"]
     input_code = state["input_code"].strip()
 
@@ -93,7 +91,6 @@ async def group_remove_confirm(bot: Bot, event: Event, state: dict):
 
     if input_code != code:
         await cmd_group_remove.finish("随机码不匹配，操作取消")
-        return
 
     group = helper.get_group(event.group_id)
 

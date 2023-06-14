@@ -1,25 +1,7 @@
 import re
 from asyncio import create_task
 
-import nonebot
-from nonebot.adapters.cqhttp import Bot
-
-from .config import Config
-
-DRIVER = G_CONF = CONF = None
-try:
-    DRIVER = nonebot.get_driver()
-    G_CONF = DRIVER.config
-    CONF = Config(**G_CONF.dict())
-except ValueError:
-    pass
-
-
-def get_bot() -> Bot:
-    for bot in DRIVER.bots.values():
-        return bot
-    return None
-
+from nonebot import get_bot, get_driver
 
 # Common regexes
 
@@ -39,13 +21,14 @@ async def exception_to_su_real(e, *messages):
     etype = type(e).__name__
     emsg = getattr(e, "message", repr(e))
     await get_bot().send_private_msg(
-        user_id=next(iter(G_CONF.superusers)),
+        user_id=next(iter(get_driver().config.superusers)),
         message=f"Exception {etype}: {emsg}",
         auto_escape=True,
     )
     for message in messages:
         await get_bot().send_private_msg(
-            user_id=next(iter(G_CONF.superusers)),
+            detail_type="private",
+            user_id=next(iter(get_driver().config.superusers)),
             message=message,
             auto_escape=False,
         )

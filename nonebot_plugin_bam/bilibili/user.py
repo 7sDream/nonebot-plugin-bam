@@ -2,7 +2,12 @@ from .api import APIResult
 
 
 class UserInfo(APIResult):
-    URL = "https://api.bilibili.com/x/space/acc/info?mid={uid}"
+    URL = "https://api.bilibili.com/x/space/wbi/acc/info"
+    # URL = "https://api.bilibili.com/x/space/acc/info"
+    QUERY = {
+        "mid": "{uid}",
+    }
+    WBI = True
 
     def __init__(self):
         super().__init__()

@@ -1,12 +1,6 @@
-import operator
-import random
-import re
-
-from nonebot import on_command, on_message
-from nonebot.adapters.cqhttp import Bot, Event, Message
-from nonebot.adapters.cqhttp.permission import GROUP, PRIVATE
-from nonebot.log import logger
-from nonebot.rule import regex, to_me
+from nonebot import on_command
+from nonebot.adapters.onebot.v11 import Bot, Event, Message, GROUP, PRIVATE
+from nonebot.rule import to_me
 
 from .bilibili.activity import H5Activity, activity
 from .common import RE_NUMBER
@@ -17,7 +11,7 @@ cmd_bilibili_activity_info = on_command(
 
 
 @cmd_bilibili_activity_info.handle()
-async def bilibili_activity_info(bot: Bot, event: Event, state: dict):
+async def bilibili_activity_info(bot: Bot, event: Event):
     messages = []
 
     if await GROUP(bot, event):

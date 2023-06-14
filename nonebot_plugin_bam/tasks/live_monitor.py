@@ -2,11 +2,11 @@ import asyncio
 import json
 import traceback
 
-from nonebot import require
-from nonebot.adapters.cqhttp import Bot
+from nonebot import get_bot, require
 from nonebot.log import logger
 
-from ..common import CONF, get_bot, send_exception_to_su
+from ..common import send_exception_to_su
+from ..config import CONF
 from ..database import helper
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler

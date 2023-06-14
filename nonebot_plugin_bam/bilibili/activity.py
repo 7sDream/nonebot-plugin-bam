@@ -2,7 +2,8 @@ import json
 
 from nonebot.log import logger
 
-from ..common import CONF, cq_encode
+from ..common import cq_encode
+from ..config import CONF
 from .api import APIResult
 
 MAX_LENGTH = CONF.bam_activity_content_max_length

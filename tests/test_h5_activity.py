@@ -1,5 +1,6 @@
-import os
 import json
+import os
+
 import pytest
 
 
@@ -10,21 +11,22 @@ def load_data(name):
 
 
 @pytest.fixture
-def export():
+def init():
     import nonebot
-    from nonebot.adapters.cqhttp import Bot as CQHTTPBot
+    from nonebot.adapters.console import Adapter as ConsoleAdapter
 
     nonebot.init()
     driver = nonebot.get_driver()
-    driver.register_adapter("cqhttp", CQHTTPBot)
+    driver.register_adapter(ConsoleAdapter)
     nonebot.load_builtin_plugins()
     nonebot.load_plugin("nonebot_plugin_bam")
 
-    return nonebot.require("nonebot_plugin_bam")
+    nonebot.require("nonebot_plugin_bam")
 
+def test_h5(init):
+    from nonebot_plugin_bam.bilibili.activity import Activity
 
-def test_h5(export):
-    act = export.Activity(load_data("h5.json"))
+    act = Activity(load_data("h5.json"))
     assert act.uid == 1926156228
     assert act.username == "希亚娜Ciyana"
     assert act.h5_title == "希亚娜Ciyana的直播日历"
