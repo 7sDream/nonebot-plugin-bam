@@ -31,7 +31,7 @@ async def init_client():
         connector=TCPConnector(force_close=True),
     )
 
-    logger.info(f"[{LOGNAME}] Client initalited")
+    logger.success(f"[{LOGNAME}] init HTTP client ok")
 
 
 class APIResult(abc.ABC):

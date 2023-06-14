@@ -4,6 +4,8 @@ from peewee import Model, PeeweeException, SqliteDatabase
 
 from ..config import CONF
 
+LOGNAME = "DATABASE"
+
 DB = SqliteDatabase(
     CONF.bam_db_file,
     pragmas={
@@ -33,6 +35,7 @@ def init_database():
         logger.error(str(e))
         raise e
 
+    logger.success(f"[{LOGNAME}] init ok")
 
 def connect_database():
     if CONF.bam_db_file == ":memory:":
