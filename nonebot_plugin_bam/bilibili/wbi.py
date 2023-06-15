@@ -2,7 +2,7 @@ import datetime
 import hashlib
 import itertools
 import time
-import urllib
+import urllib.parse
 
 from .api import APIResult
 

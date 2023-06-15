@@ -52,9 +52,9 @@ class Activity:
     @classmethod
     def build_known_types_map(cls):
         return {
-            sub.TYPE_VALUE: sub
+            getattr(sub, "TYPE_VALUE"): sub
             for sub in cls.__subclasses__()
-            if getattr(sub, "TYPE_VALUE", None) is not None
+            if hasattr(sub, "TYPE_VALUE")
         }
 
     def __init__(self, card):
@@ -71,8 +71,8 @@ class Activity:
             if "name" in self._card_data["user"]:
                 self.username = self._card_data["user"]["name"]
 
-    def display(self):
-        pass
+    def display(self) -> str:
+        raise NotImplementedError
 
     def url(self):
         return f"https://t.bilibili.com/{self.id}"
@@ -321,6 +321,8 @@ class ActivityList(APIResult):
 
     def __initialize__(self, body, *, uid, offset):
         self.uid = uid
+        self.code = body["code"]
+        self.message = body["message"]
         self.ok = body["code"] == 0
         self.__data = []
         if self.ok and "cards" in body["data"]:

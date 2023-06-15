@@ -1,13 +1,14 @@
 import abc
 import time
-import urllib
+import urllib.parse
 from http.cookies import SimpleCookie
+from typing import ClassVar, Dict, Optional
 
 from aiohttp import ClientSession, ClientTimeout, CookieJar, TCPConnector
 from nonebot import get_driver
 from nonebot.log import logger
 
-client: ClientSession = None
+client: ClientSession = None # type: ignore
 
 LOGNAME = "BILIBILI:API"
 
@@ -35,7 +36,9 @@ async def init_client():
 
 
 class APIResult(abc.ABC):
-    URL = None
+    URL: ClassVar[str]
+    QUERY: ClassVar[Dict[str, str]]
+    WBI: ClassVar[Optional[bool]]
 
     def __init__(self):
         self.ok = False

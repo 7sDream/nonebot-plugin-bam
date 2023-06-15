@@ -1,6 +1,8 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, Event
+from nonebot.adapters.onebot.v11 import (Bot, GroupMessageEvent, Message,
+                                         MessageEvent)
 from nonebot.adapters.onebot.v11.permission import GROUP
+from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 
 from .bilibili.user import user_info
@@ -15,25 +17,25 @@ cmd_follower_list = on_command(
 
 
 @cmd_follower_list.handle()
-async def follower_list(bot: Bot, event: Event):
+async def follower_list(event: MessageEvent, args: Message = CommandArg()):
     gid = None
-    if await GROUP(bot, event):
+    if isinstance(event, GroupMessageEvent):
         gid = event.group_id
     else:  # private, superuser
-        args = str(event.message).strip()
-        if RE_NUMBER.match(args):
-            gid = int(args)
+        args_text = args.extract_plain_text().strip()
+        if RE_NUMBER.match(args_text):
+            gid = int(args_text)
         else:
-            return await cmd_follower_list.finish("此命令需要一个群号参数")
+            await cmd_follower_list.finish("此命令需要一个群号参数")
 
     group = helper.get_group_with_following_users(gid)
 
     if group is None:
-        return await cmd_follower_list.finish("此群不在服务列表中")
+        await cmd_follower_list.finish("此群不在服务列表中")
 
     message = ["关注用户列表:"]
 
-    for following in group.followings:
+    for following in group.followings: # type: ignore
         following = following.bilibili_user
         message.append(f"{following.uid}({following.nickname})")
 
@@ -47,10 +49,11 @@ async def follower_list(bot: Bot, event: Event):
 
 
 class CommandInfo:
-    def __init__(self, cmd, bot: Bot, event: Event):
+    def __init__(self, cmd, bot: Bot, event: MessageEvent, args: Message):
         self.cmd = cmd
         self.bot = bot
         self.event = event
+        self.args = args.extract_plain_text().strip()
         self.gid = self.uid = None
 
     async def check(self):
@@ -59,17 +62,16 @@ class CommandInfo:
         self.message_type = "group" if self.in_group else "private"
         self.sender_id = self.event.user_id
 
-        args = str(self.event.message).strip()
-
         if self.in_group:
+            assert isinstance(self.event, GroupMessageEvent)
             self.gid = self.event.group_id
-            if RE_NUMBER.match(args):
-                self.uid = int(args)
+            if RE_NUMBER.match(self.args):
+                self.uid = int(self.args)
             else:
                 await self.cmd.finish("用户 UID 无效")
                 return False
         elif self.is_su:  # private, su
-            parts = args.split(" ")
+            parts = self.args.split(" ")
             if len(parts) != 2:
                 return await self.cmd.finish("缺少参数，需要群号和 UID")
             if RE_NUMBER.match(parts[0]):
@@ -109,12 +111,14 @@ cmd_follower_add = on_command(("bam", "follower", "add"), permission=SUPERUSER |
 
 
 @cmd_follower_add.handle()
-async def follower_add(bot: Bot, event: Event):
+async def follower_add(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
 
-    command = CommandInfo(cmd_follower_add, bot, event)
+    command = CommandInfo(cmd_follower_add, bot, event, args)
 
     if not await command.check():
         return
+
+    assert(command.group is not None)
 
     for following in command.group.followings:
         following = following.bilibili_user
@@ -145,11 +149,13 @@ cmd_follower_remove = on_command(
 
 
 @cmd_follower_remove.handle()
-async def follower_remove(bot: Bot, event: Event):
-    command = CommandInfo(cmd_follower_remove, bot, event)
+async def follower_remove(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
+    command = CommandInfo(cmd_follower_remove, bot, event, args)
 
     if not await command.check():
         return
+
+    assert(command.group is not None)
 
     for following in command.group.followings:
         following = following.bilibili_user

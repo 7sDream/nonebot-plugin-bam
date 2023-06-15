@@ -1,9 +1,9 @@
 import asyncio
-import json
 import traceback
 from datetime import datetime, timedelta
+from typing import Optional
 
-from nonebot import require, get_bot
+from nonebot import get_bot, require
 from nonebot.log import logger
 
 from ..bilibili.activity import ActivityList, H5Activity, activity_list
@@ -37,7 +37,7 @@ async def task_check_new_activity():
     scheduler.resume_job(JOB_ID)
 
 
-async def process_user_actlist(user, actlist: ActivityList):
+async def process_user_actlist(user, actlist: Optional[ActivityList]):
     has_new = False
     latest = 0
     if actlist is None:

@@ -1,5 +1,6 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import Bot, Event, Message, GROUP, PRIVATE
+from nonebot.params import CommandArg
+from nonebot.adapters.onebot.v11 import Bot, MessageEvent, Message, GROUP, PRIVATE
 from nonebot.rule import to_me
 
 from .bilibili.activity import H5Activity, activity
@@ -11,25 +12,25 @@ cmd_bilibili_activity_info = on_command(
 
 
 @cmd_bilibili_activity_info.handle()
-async def bilibili_activity_info(bot: Bot, event: Event):
+async def bilibili_activity_info(bot: Bot, event: MessageEvent, args: Message = CommandArg()):
     messages = []
 
     if await GROUP(bot, event):
         messages.append(f"[CQ:at,qq={event.user_id}]")
 
-    args = str(event.message).strip()
+    arg_text = args.extract_plain_text().strip()
 
-    if RE_NUMBER.match(args) is None:
+    if RE_NUMBER.match(arg_text) is None:
         messages.append("参数错误，请输入正确的动态 ID")
-        return await cmd_bilibili_activity_info.finish("\n".join(messages))
+        await cmd_bilibili_activity_info.finish("\n".join(messages))
 
-    act_id = int(args)
+    act_id = int(arg_text)
 
     act = await activity(act_id)
 
     if act is None:
         messages.append("获取动态信息失败")
-        return await cmd_bilibili_activity_info.finish("\n".join(messages))
+        await cmd_bilibili_activity_info.finish("\n".join(messages))
 
     username = getattr(act, "username", f"ID 为 {act.uid} 的用户")
     messages.extend([f"{username} 的动态", "", act.display()])

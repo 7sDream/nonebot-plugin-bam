@@ -1,5 +1,6 @@
 from nonebot import on_command
-from nonebot.adapters.onebot.v11 import GROUP, PRIVATE, Bot, Event
+from nonebot.adapters.onebot.v11 import Message, MessageEvent
+from nonebot.params import CommandArg
 from nonebot.permission import SUPERUSER
 from nonebot.rule import to_me
 
@@ -13,13 +14,13 @@ cmd_user_fetch = on_command(
 
 
 @cmd_user_fetch.handle()
-async def user_fetch(bot: Bot, event: Event):
-    args = str(event.message).strip()
+async def user_fetch(event: MessageEvent, args: Message = CommandArg()):
+    arg_text = args.extract_plain_text().strip()
 
-    if RE_NUMBER.match(args):
-        uid = int(args)
+    if RE_NUMBER.match(arg_text):
+        uid = int(arg_text)
 
-        bot.send_private_msg(user_id=event.user_id, message=f"开始获取 {uid} 用户信息")
+        await cmd_user_fetch.send(user_id=event.user_id, message=f"开始获取 {uid} 用户信息")
 
         user = await user_info(uid)
 
@@ -28,7 +29,6 @@ async def user_fetch(bot: Bot, event: Event):
             await cmd_user_fetch.finish(
                 f"UID: {uid}, 昵称: {user.nickname}, 直播间: {user.rid}, 已储存/更新完成。"
             )
-
         else:
             await cmd_user_fetch.finish(f"获取用户信息失败")
     else:
