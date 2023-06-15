@@ -63,7 +63,7 @@ BAM_ON_STARTUP_CLEAN_LIVE_STATUS=false
 # 所以如果一共关注了 N 个人（多个群关注同一个人只算一个）
 # 那对于每个人来说，两次检测之间的间隔就是 N * interval
 # 一般来说不要设置在 5 以下，可能会被 B 站 API 反爬而拒绝响应
-BAM_TASK_INTERVAL=5
+BAM_MONITOR_TASK_INTERVAL=5
 
 # 使用那一个直播间状态查询 API，默认为 2，如果发现被封禁了可以临时调到 1 试试
 BAM_LIVE_API=2
