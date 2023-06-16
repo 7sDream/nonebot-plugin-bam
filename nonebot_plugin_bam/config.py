@@ -1,4 +1,5 @@
 import nonebot
+from nonebot.log import logger
 from pydantic import BaseSettings
 
 
@@ -13,3 +14,8 @@ class Config(BaseSettings):
         extra = "ignore"
 
 CONF = Config(**nonebot.get_driver().config.dict())
+
+def log_config():
+    logger.info("[Config] configure content: " + CONF.json())
+
+nonebot.get_driver().on_startup(log_config)
