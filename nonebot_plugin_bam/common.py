@@ -1,7 +1,9 @@
 import re
 from asyncio import create_task
+from typing import Optional, cast
 
 from nonebot import get_bot, get_driver
+from nonebot.adapters.onebot.v11 import Bot
 
 # Common regexes
 
@@ -9,6 +11,12 @@ RE_NUMBER = re.compile(r"^\d+$")
 
 # Common functions
 
+def try_get_bot() -> Optional[Bot]:
+    try:
+        bot = cast(Bot, get_bot())
+    except ValueError:
+        bot = None
+    return bot
 
 def cq_encode(s: str) -> str:
     s = s.replace("&", "&amp;")
@@ -20,18 +28,22 @@ def cq_encode(s: str) -> str:
 async def exception_to_su_real(e, *messages):
     etype = type(e).__name__
     emsg = getattr(e, "message", repr(e))
-    await get_bot().send_private_msg(
-        user_id=next(iter(get_driver().config.superusers)),
-        message=f"Exception {etype}: {emsg}",
-        auto_escape=True,
-    )
-    for message in messages:
-        await get_bot().send_private_msg(
-            detail_type="private",
-            user_id=next(iter(get_driver().config.superusers)),
-            message=message,
-            auto_escape=False,
+    bot = try_get_bot()
+    suid = 0
+    for uid in get_driver().config.superusers:
+        suid = int(uid)
+    if bot is not None and suid != 0:
+        await bot.send_private_msg(
+            user_id=suid,
+            message=f"Exception {etype}: {emsg}",
+            auto_escape=True,
         )
+        for message in messages:
+            await bot.send_private_msg(
+                user_id=suid,
+                message=message,
+                auto_escape=False,
+            )
 
 
 def send_exception_to_su(e, *messages):

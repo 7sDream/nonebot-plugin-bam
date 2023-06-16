@@ -1,11 +1,11 @@
 import asyncio
-import json
 import traceback
+from typing import Optional, cast
 
-from nonebot import get_bot, require
+from nonebot import require
 from nonebot.log import logger
 
-from ..common import send_exception_to_su
+from ..common import send_exception_to_su, try_get_bot
 from ..config import CONF
 from ..database import helper
 
@@ -42,7 +42,7 @@ async def task_check_all_live_status():
     scheduler.resume_job(JOB_ID)
 
 
-async def process_user_room_info(user, room: RoomInfo):
+async def process_user_room_info(user, room: Optional[RoomInfo]):
     ret = 0
 
     if room is None:
@@ -68,7 +68,7 @@ async def process_user_room_info(user, room: RoomInfo):
             message.extend([f"{user.nickname} 下播啦！", "期待着TA的下一次直播吧~"])
             ret = -1
 
-        bot = get_bot()
+        bot = try_get_bot()
         if bot is not None and len(message) > 0:
             group_message = "\n".join(message)
             for link in user.groups:
@@ -107,16 +107,12 @@ async def check_all_live_status():
         try:
             logger.info(f"[{LOGNAME}] checking {user.nickname} live status...")
             room = await room_info(uid=user.uid, rid=user.rid)
-            if not room.ok and hasattr(room, "code"):
-                logger.warning(
-                    f"[{LOGNAME}] check {user.nickname}({user.uid})'s room failed: {room.code} {room.message}"
-                )
         except Exception as e:
             logger.warning(
                 f"[{LOGNAME}] check {user.uid} live status task failed: {str(e)}"
             )
 
-        ret = await process_user_room_info(user, room)
+        ret = await process_user_room_info(user, cast(Optional[RoomInfo], room))
 
         if ret > 0:
             live_become_open_users.append(user)

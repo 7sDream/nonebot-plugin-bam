@@ -3,18 +3,18 @@ import traceback
 from datetime import datetime, timedelta
 from typing import Optional
 
-from nonebot import get_bot, require
+from nonebot import require
 from nonebot.log import logger
 
 from ..bilibili.activity import ActivityList, H5Activity, activity_list
-from ..common import send_exception_to_su
+from ..common import send_exception_to_su, try_get_bot
 from ..config import CONF
 from ..database import helper
 
 scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 JOB_ID = "activity_monitor"
-LOGNAME = "TASK:ACTIVITY"
+LOGNAME = "BTASK:ACTIVITY"
 INTERVAL = CONF.bam_monitor_task_interval
 
 
@@ -55,45 +55,42 @@ async def process_user_actlist(user, actlist: Optional[ActivityList]):
                     latest = act.id
                     has_new = True
         else:  # get new activities
-            bot = get_bot()
+            bot = try_get_bot()
             for _, act in reversed(list(zip(range(3), actlist))):  # max send 3
-                if act is None:
+                if act is None or act.id <= latest or bot is None:
                     continue
-
-                if act.id > latest:
-                    has_new = True
-                    latest = act.id
-                    if bot is not None:
-                        group_message = f"叮铃铃铃！{user.nickname} 有新动态！\n{act.display()}"
-                        h5_share_card = None
-                        if isinstance(act, H5Activity):
-                            h5_share_card = act.h5_share_card()
-                        for link in user.groups:
-                            group_id = link.group_id
-                            at_users = link.at_users
-                            the_group_message = group_message
-                            if at_users:
-                                the_group_message += "\n"
-                                for at_user in at_users.split(";"):
-                                    the_group_message += f"[CQ:at,qq={at_user}]"
-                            logger.info(f"Send activity message: {the_group_message}")
-                            try:
-                                await bot.send_group_msg(
-                                    group_id=group_id,
-                                    message=the_group_message,
-                                    auto_escape=False,
-                                )
-                            except Exception as e:
-                                send_exception_to_su(e, the_group_message)
-                            if h5_share_card is not None:
-                                try:
-                                    await bot.send_group_msg(
-                                        group_id=group_id,
-                                        message=h5_share_card,
-                                        auto_escape=False,
-                                    )
-                                except Exception as e:
-                                    pass
+                has_new = True
+                latest = act.id
+                group_message = f"叮铃铃铃！{user.nickname} 有新动态！\n{act.display()}"
+                h5_share_card = None
+                if isinstance(act, H5Activity):
+                    h5_share_card = act.h5_share_card()
+                for link in user.groups:
+                    group_id = link.group_id
+                    at_users = link.at_users
+                    the_group_message = group_message
+                    if at_users:
+                        the_group_message += "\n"
+                        for at_user in at_users.split(";"):
+                            the_group_message += f"[CQ:at,qq={at_user}]"
+                    logger.info(f"Send activity message: {the_group_message}")
+                    try:
+                        await bot.send_group_msg(
+                            group_id=group_id,
+                            message=the_group_message,
+                            auto_escape=False,
+                        )
+                    except Exception as e:
+                        send_exception_to_su(e, the_group_message)
+                    if h5_share_card is not None:
+                        try:
+                            await bot.send_group_msg(
+                                group_id=group_id,
+                                message=h5_share_card,
+                                auto_escape=False,
+                            )
+                        except Exception as e:
+                            pass
     elif hasattr(actlist, "code"):
         logger.info(
             f"[{LOGNAME}] check {user.nickname}({user.uid}) failed: {actlist.code} {actlist.message}"
@@ -113,10 +110,6 @@ async def check_new_activity():
         try:
             logger.info(f"[{LOGNAME}] checking {user.nickname} activities...")
             actlist = await activity_list(uid=user.uid)
-            if not actlist.ok and hasattr(actlist, "code"):
-                logger.warning(
-                    f"[{LOGNAME}] check {user.nickname}({user.uid})'s activities failed: {actlist.code} {actlist.message}"
-                )
         except Exception as e:
             logger.warning(
                 f"[{LOGNAME}] check {user.uid} activity list task failed: {str(e)}"
