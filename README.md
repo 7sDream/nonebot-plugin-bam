@@ -66,6 +66,9 @@ BAM_ON_STARTUP_CLEAN_LIVE_STATUS=false
 # 那对于每个人来说，两次检测之间的间隔就是 N * interval
 # 一般来说不要设置在 5 以下，可能会被 B 站 API 反爬而拒绝响应
 BAM_MONITOR_TASK_INTERVAL=5
+# 单独设置每个任务的间隔，如果没有设置，或者设置成 <= 0 的值，就会用上面那个
+BAM_ACTIVITY_MONITOR_TASK_INTERVAL=0
+BAM_LIVE_MONITOR_TASK_INTERVAL=0
 
 # 使用那一个直播间状态查询 API，默认为 2，如果发现被封禁了可以临时调到 1 试试
 BAM_LIVE_API=2

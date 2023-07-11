@@ -7,6 +7,8 @@ class Config(BaseSettings):
     bam_db_file: str = ":memory:"
     bam_on_startup_clean_live_status: bool = False
     bam_monitor_task_interval: int = 5
+    bam_activity_monitor_task_interval: int = 0
+    bam_live_monitor_task_interval: int = 0
     bam_live_api: int = 2
     bam_activity_content_max_length: int = 0
 

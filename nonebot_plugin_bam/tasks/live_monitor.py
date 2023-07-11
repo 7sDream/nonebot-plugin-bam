@@ -13,7 +13,9 @@ scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 JOB_ID = "live_monitor"
 LOGNAME = "BTASK:LIVE"
-INTERVAL = CONF.bam_monitor_task_interval
+INTERVAL = CONF.bam_live_monitor_task_interval
+if INTERVAL <= 0:
+    INTERVAL = CONF.bam_monitor_task_interval 
 
 if CONF.bam_live_api == 1:
     from ..bilibili.live1 import RoomInfo, room_info

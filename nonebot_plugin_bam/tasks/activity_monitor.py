@@ -15,7 +15,9 @@ scheduler = require("nonebot_plugin_apscheduler").scheduler
 
 JOB_ID = "activity_monitor"
 LOGNAME = "BTASK:ACTIVITY"
-INTERVAL = CONF.bam_monitor_task_interval
+INTERVAL = CONF.bam_activity_monitor_task_interval
+if INTERVAL <= 0:
+    INTERVAL = CONF.bam_monitor_task_interval 
 
 
 @scheduler.scheduled_job(

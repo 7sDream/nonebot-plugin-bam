@@ -7,7 +7,7 @@ from .tasks.activity_monitor import task_check_new_activity
 from .tasks.live_monitor import task_check_all_live_status
 from .user import cmd_user_fetch
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 from nonebot.plugin import PluginMetadata
 
